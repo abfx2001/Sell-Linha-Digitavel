@@ -46,6 +46,12 @@ td {
 
 table {
   width: 100% !important;
+  border: 5px solid lightgrey;
+}
+
+.invisivel {
+  visibility: hidden;
+  display: none;
 }
 
 .img-wpp {

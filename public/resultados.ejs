@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="PT-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../src/assets/css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <title>Linha Digitável</title>
+  </head>
+  <body>
+    <div class="container text-center">
+      <div class="row align-items-center">
+        <div class="col-md-6 offset-md-3">
+          <img
+            style="width: 300px"
+            class="logo"
+            src="/img/Logos_SellAdministradora_SellAdm_LogoPositiva_Cor.png"
+            alt="Sell-Logo"
+          />
+          <br />
+          <h1>Resultados para: <%= cpfCnpj %></h1>
+        </div>
+        <table class="table table-hover table-bordered container-fluid">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Condominio</th>
+              <th>Bloco</th>
+              <th>Unidade</th>
+              <th>Linha Digitável</th>
+              <th class="invisivel">Tipo - invisivel</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% Condominio.forEach(function(item) { %>
+            <tr>
+              <td><%= item.condominio %></td>
+              <td><%= item.nome %></td>
+              <td><%= item.bloco %></td>
+              <td><%= item.unidade %></td>
+              <td class="invisivel"><%= item.tipo %></td>
+              <td>
+                <a href="#" class="visualizar-link">Visualizar</a>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+        <br />
+        <br />
+        <div class="col-md-6 offset-md-3">
+          <p class="justify-content-evenly">
+            <font color="#3999d5">Atender</font> está no nosso DNA,
+            <font color="#3999d5">entender</font> é o nosso diferencial. No
+            portal Sell, a
+            <a href="https://www.selladm.com.br"
+              ><font color="#6eb858">2ª via do boleto</font></a
+            >
+            é descomplicada, assim como deve ser.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="row m-0">
+      <div class="col-1 offset-11">
+        <a
+          class="float img-wpp"
+          href="https://api.whatsapp.com/send?phone=551137960203&text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20servi%C3%A7os%20serviços"
+        >
+          <i class="fa fa-whatsapp my-float img-wpp" alt="whatsapp"></i>
+        </a>
+      </div>
+    </div>
+    <script src="./assets/js/bundle.js"></script>
+  </body>
+</html>
