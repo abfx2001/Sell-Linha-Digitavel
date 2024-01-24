@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const parseString = require("xml2js").parseString;
-const crypto = require("crypto");
+//const crypto = require("crypto");
 require("dotenv").config();
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.set("view engine", "ejs");
 
-const cipher = crypto.createCipher("aes-256-cbc", process.env.SECRECY);
+//const cipher = crypto.createCipher("aes-256-cbc", process.env.SECRECY);
 
 app.post("/buscar", async (req, res) => {
   const { fildValue } = req.body;
