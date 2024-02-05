@@ -35,6 +35,19 @@ h1 {
   color: white !important;
 }
 
+.btn-copiar {
+  background: #14293f !important;
+  border: none !important;
+  border-radius: 30px !important;
+  color: white !important;
+  font-size: 15px !important;
+  padding: 2px 18px 2px 18px;
+}
+
+.btn-copiar:hover {
+  background: #4e7caa !important;
+}
+
 .btn-avancar:hover {
   background: #4e7caa !important;
 }

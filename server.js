@@ -39,6 +39,7 @@ app.post("/show-linha", async (req, res) => {
     // aqui onde deve ser mudado
     const jsonResultadoLinhaDigitavel = await buscaRelacaoRecibo(dados);
     const StgResultadoLinhaDigitavel = JSON.stringify(jsonResultadoLinhaDigitavel)
+
     console.log(StgResultadoLinhaDigitavel)
     // let encryptedData = cipher.update(StgResultadoLinhaDigitavel, "utf8", "hex");
     // encryptedData += cipher.final("hex");
@@ -53,11 +54,32 @@ app.post("/show-linha", async (req, res) => {
 app.get("/show-linha", async (req, res) => {
   try {
     const LinhaDigitavelJson = req.query.linhaValue;
+    const LinhaDigitavelJsonValue = JSON.parse(LinhaDigitavelJson)
+
+    function converterData(dataISO) {
+      const dataObj = new Date(dataISO);
+      const dia = String(dataObj.getDate()).padStart(2, '0');
+      const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+      const ano = dataObj.getFullYear();
+      return `${dia}-${mes}-${ano}`;
+    }
+    function formatarValor(valor) {
+      const valorFormatado = valor.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+      return valorFormatado;
+    }
+    // Iterar sobre os elementos Recibo e converter a data
+    LinhaDigitavelJsonValue.Recibos.forEach((recibo) => {
+      recibo.vencimento = converterData(recibo.vencimento);
+      recibo.valor = formatarValor(recibo.valor);
+    });
     // const decipher = crypto.createDecipher("aes-256-cbc", process.env.SECRECY);
     // let decryptedData = decipher.update(LinhaDigitavelJson, "hex", "utf8");
     // decryptedData += decipher.final("utf8");
     res.render(__dirname + "/public/linhaDigitavel.ejs", {
-      linhaDigitavelStg: LinhaDigitavelJson,
+      linhaDigitavelStg: LinhaDigitavelJsonValue,
     });
   } catch (error) {
     console.error("Erro ao renderizar:", error);
