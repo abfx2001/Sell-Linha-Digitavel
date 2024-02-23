@@ -44,6 +44,16 @@ h1 {
   padding: 2px 18px 2px 18px;
 }
 
+.btn-voltar {
+  background: #14293f !important;
+  border: none !important;
+  border-radius: 30px !important;
+  font-size: 20px !important;
+  margin-bottom: 40px;
+  color: white !important;
+  padding: 2px 18px 2px 18px;
+}
+
 .btn-copiar:hover {
   background: #4e7caa !important;
 }

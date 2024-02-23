@@ -1,8 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const parseString = require("xml2js").parseString;
-//const crypto = require("crypto");
+const soap = require("soap");
 require("dotenv").config();
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -11,11 +10,10 @@ app.use(express.json());
 
 app.set("view engine", "ejs");
 
-//const cipher = crypto.createCipher("aes-256-cbc", process.env.SECRECY);
-
 app.post("/buscar", async (req, res) => {
   const { fildValue } = req.body;
-  res.redirect(`/resultados?fildValue=${fildValue}`);
+  const fildValueClear = fildValue.replace(/[^\d]/g, '');
+  res.redirect(`/resultados?fildValue=${fildValueClear}`);
 });
 
 app.get("/resultados", (req, res) => {
@@ -36,15 +34,8 @@ app.get("/resultados", (req, res) => {
 app.post("/show-linha", async (req, res) => {
   try {
     const dados = req.body;
-    // aqui onde deve ser mudado
     const jsonResultadoLinhaDigitavel = await buscaRelacaoRecibo(dados);
-    const StgResultadoLinhaDigitavel = JSON.stringify(jsonResultadoLinhaDigitavel)
-
-    console.log(StgResultadoLinhaDigitavel)
-    // let encryptedData = cipher.update(StgResultadoLinhaDigitavel, "utf8", "hex");
-    // encryptedData += cipher.final("hex");
-    // console.log(encryptedData);
-    res.redirect(`/show-linha?linhaValue=${StgResultadoLinhaDigitavel}`);
+    res.redirect(`/show-linha?linhaValue=${jsonResultadoLinhaDigitavel}`);
   } catch (error) {
     console.error("Erro ao renderizar:", error);
     res.status(500).send("Erro ao renderizar a página");
@@ -63,6 +54,7 @@ app.get("/show-linha", async (req, res) => {
       const ano = dataObj.getFullYear();
       return `${dia}-${mes}-${ano}`;
     }
+
     function formatarValor(valor) {
       const valorFormatado = valor.toLocaleString('pt-BR', {
         style: 'currency',
@@ -70,14 +62,12 @@ app.get("/show-linha", async (req, res) => {
       });
       return valorFormatado;
     }
-    // Iterar sobre os elementos Recibo e converter a data
-    LinhaDigitavelJsonValue.Recibos.forEach((recibo) => {
+
+    LinhaDigitavelJsonValue.forEach((recibo) => {
       recibo.vencimento = converterData(recibo.vencimento);
       recibo.valor = formatarValor(recibo.valor);
     });
-    // const decipher = crypto.createDecipher("aes-256-cbc", process.env.SECRECY);
-    // let decryptedData = decipher.update(LinhaDigitavelJson, "hex", "utf8");
-    // decryptedData += decipher.final("utf8");
+
     res.render(__dirname + "/public/linhaDigitavel.ejs", {
       linhaDigitavelStg: LinhaDigitavelJsonValue,
     });
@@ -87,214 +77,90 @@ app.get("/show-linha", async (req, res) => {
   }
 });
 
-function buscaCPFJson(cpf) {
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/soap+xml; charset=utf-8");
-  myHeaders.append("Cookie", process.env.COOKIE);
+app.use((err, req, res, next) => {
+  if (err.message === 'SOAP_REQUEST_ERROR') {
+    // Send a specific HTTP response with the error message
+    return res.status(500).json({ error: err.message });
+  }
+  // Handle other errors
+  res.status(500).json({ error: 'Internal Server Error' });
+});
 
-  var raw = `<?xml version="1.0" encoding="utf-8"?>
-       <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
-         <soap12:Body>
-           <BuscaCPF_Chatbot_Json xmlns="http://gosati.com.br/webservices/">
-             <cnpj_cpf>${cpf}</cnpj_cpf>
-             <usuario>${process.env.USER}</usuario>
-             <senha>${process.env.SENHA}</senha>
-             <chave>${process.env.CHAVE}</chave>
-           </BuscaCPF_Chatbot_Json>
-         </soap12:Body>
-       </soap12:Envelope>`;
+const url =
+  "http://selladm.dyndns.org:5500/Condominioweb/wsDocumentos.asmx?WSDL";
 
-  var requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
+async function buscaCPFJson(cpf) {
+  const request = {
+    cnpj_cpf: cpf,
+    usuario: process.env.USER,
+    senha: process.env.SENHA,
+    chave: process.env.CHAVE,
   };
-
-  return fetch(process.env.URL_CON, requestOptions)
-    .then((response) => response.text())
-    .then((result) => {
-      return new Promise((resolve, reject) => {
-        parseString(result, function (err, resultDataJson) {
-          if (err) {
-            console.error("Erro ao analisar XML:", err);
-            reject(err);
-            return;
-          }
-          const buscaCPFJsonResult =
-            resultDataJson["soap:Envelope"]["soap:Body"][0][
-              "BuscaCPF_Chatbot_JsonResponse"
-            ][0]["BuscaCPF_Chatbot_JsonResult"][0];
-          const jsonBuscaCPF = JSON.parse(buscaCPFJsonResult);
-          resolve(jsonBuscaCPF);
-        });
-      });
-    })
-    .catch((error) => {
-      console.log("error", error);
-      throw error;
+  try {
+    const client = await soap.createClientAsync(url, {
+      endpoint: url,
     });
+    const result = await client.BuscaCPF_Chatbot_JsonAsync(request);
+    return(JSON.parse(result[0].BuscaCPF_Chatbot_JsonResult));
+  } catch (err) {
+    console.error("Error making SOAP request:", err);
+    throw new Error('SOAP_REQUEST_ERROR', { cause: err });
+  }
 }
 
-function buscaRelacaoRecibo(jsonBuscaCPF) {
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/soap+xml; charset=utf-8");
-  myHeaders.append("Cookie", process.env.COOKIE);
-
-  var raw = `<?xml version="1.0" encoding="utf-8"?>
-      <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
-        <soap12:Body>
-          <RelacaoRecibos_Chatbot_Json xmlns="http://gosati.com.br/webservices/">
-            <condominio>${jsonBuscaCPF.numero}</condominio>
-            <bloco>${jsonBuscaCPF.bloco}</bloco>
-            <unidade>${jsonBuscaCPF.unidade}</unidade>
-            <tipo>${jsonBuscaCPF.tipo}</tipo>
-            <usuario>${process.env.USER}</usuario>
-            <senha>${process.env.SENHA}</senha>
-            <chave>${process.env.CHAVE}</chave>
-          </RelacaoRecibos_Chatbot_Json>
-        </soap12:Body>
-      </soap12:Envelope>`;
-
-  var requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
+async function buscaRelacaoRecibo(jsonBuscaCPF) {
+  const request = {
+    condominio: jsonBuscaCPF.numero,
+    bloco: jsonBuscaCPF.bloco,
+    unidade: jsonBuscaCPF.unidade,
+    tipo: jsonBuscaCPF.tipo,
+    usuario: process.env.USER,
+    senha: process.env.SENHA,
+    chave: process.env.CHAVE,
   };
-
-  return fetch(process.env.URL_CON, requestOptions)
-    .then((response) => response.text())
-    .then((result) => {
-      return new Promise((resolve, reject) => {
-        parseString(result, function (err, resultDataJson) {
-          if (err) {
-            console.error("Erro ao analisar XML:", err);
-            reject(err);
-            return;
-          }
-          const relacaoRecibosJsonResult =
-            resultDataJson["soap:Envelope"]["soap:Body"][0][
-              "RelacaoRecibos_Chatbot_JsonResponse"
-            ][0]["RelacaoRecibos_Chatbot_JsonResult"][0];
-          const relacaoRecibos = JSON.parse(relacaoRecibosJsonResult);
-          console.log(relacaoRecibosJsonResult);
-          console.log(relacaoRecibos);
-          console.log("---------------------------");
-          resolve(buscaSegundaViaBoleto(relacaoRecibos));
-        });
-      });
-    })
-    .catch((error) => console.log("error", error));
+  try {
+    const client = await soap.createClientAsync(url, {
+      endpoint: url,
+    });
+    const result = await client.RelacaoRecibos_Chatbot_JsonAsync(request);
+    const jsonResultadoLinhaDigitavel = await buscaSegundaViaBoleto(result[0].RelacaoRecibos_Chatbot_JsonResult);
+    return jsonResultadoLinhaDigitavel;
+  } catch (err) {
+    console.error("Error making SOAP request:", err);
+  }
 }
 
-function buscaSegundaViaBoleto(relacaoRecibos) {
-  const promises = relacaoRecibos.Recibos.map(recibo => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/soap+xml; charset=utf-8");
-    myHeaders.append("Cookie", process.env.COOKIE);
-
-    var raw = `<?xml version="1.0" encoding="utf-8"?>
-      <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
-        <soap12:Body>
-          <SegundaViaBoletos_Chatbot_Json xmlns="http://gosati.com.br/webservices/">
-            <recibo>${recibo.recibo}</recibo>
-            <usuario>${process.env.USER}</usuario>
-            <senha>${process.env.SENHA}</senha>
-            <chave>${process.env.CHAVE}</chave>
-          </SegundaViaBoletos_Chatbot_Json>
-        </soap12:Body>
-      </soap12:Envelope>`;
-
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
-    return fetch(process.env.URL_CON, requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        return new Promise((resolve, reject) => {
-          parseString(result, function (err, resultDataJson) {
-            if (err) {
-              console.error("Erro ao analisar XML:", err);
-              reject(err);
-              return;
-            }
-            const segundaViaBoletoResult =
-              resultDataJson["soap:Envelope"]["soap:Body"][0][
-                "SegundaViaBoletos_Chatbot_JsonResponse"
-                ][0]["SegundaViaBoletos_Chatbot_JsonResult"][0];
-            const segundaViaBoleto = JSON.parse(segundaViaBoletoResult);
-            const LinhaDigitavelStg =
-              segundaViaBoleto.LinhaDigitavel[0].linha_digitavel;
-            resolve({ ...recibo, linhadigitavel: LinhaDigitavelStg });
-          });
-        });
-      })
-      .catch(error => console.log("error", error));
-  });
-
-  return Promise.all(promises)
-    .then(results => {
-      console.log({ Recibos: results })
-      return { Recibos: results };
-    })
-    .catch(error => console.log("error", error));
+async function buscaSegundaViaBoleto(relacaoRecibosStg) {
+  const relacaoRecibos = JSON.parse(relacaoRecibosStg);
+  const resultArray = [];
+  for (const reciboObj of relacaoRecibos.Recibos) {
+    const reciboNumber = reciboObj.recibo;
+    const requestResult = await buscaLinhaDigitavel(reciboNumber);
+    reciboObj.linhaDigitavel = requestResult;
+    resultArray.push(reciboObj);
+  }
+  const resultArrayStg = JSON.stringify(resultArray)
+  return resultArrayStg;
 }
 
-
-// function buscaSegundaViaBoleto(relacaoRecibos) {
-//   var myHeaders = new Headers();
-//   myHeaders.append("Content-Type", "application/soap+xml; charset=utf-8");
-//   myHeaders.append("Cookie", process.env.COOKIE);
-//
-//   var raw = `<?xml version="1.0" encoding="utf-8"?>
-//     <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
-//       <soap12:Body>
-//         <SegundaViaBoletos_Chatbot_Json xmlns="http://gosati.com.br/webservices/">
-//           <recibo>${relacaoRecibos.Recibos[0].recibo}</recibo>
-//           <usuario>${process.env.USER}</usuario>
-//           <senha>${process.env.SENHA}</senha>
-//           <chave>${process.env.CHAVE}</chave>
-//         </SegundaViaBoletos_Chatbot_Json>
-//       </soap12:Body>
-//     </soap12:Envelope>`;
-//
-//   var requestOptions = {
-//     method: "POST",
-//     headers: myHeaders,
-//     body: raw,
-//     redirect: "follow",
-//   };
-//
-//   return fetch(process.env.URL_CON, requestOptions)
-//     .then((response) => response.text())
-//     .then((result) => {
-//       return new Promise((resolve, reject) => {
-//         parseString(result, function (err, resultDataJson) {
-//           if (err) {
-//             console.error("Erro ao analisar XML:", err);
-//             reject(err);
-//             return;
-//           }
-//           const segundaViaBoletoResult =
-//             resultDataJson["soap:Envelope"]["soap:Body"][0][
-//               "SegundaViaBoletos_Chatbot_JsonResponse"
-//             ][0]["SegundaViaBoletos_Chatbot_JsonResult"][0];
-//           const segundaViaBoleto = JSON.parse(segundaViaBoletoResult);
-//           console.log(segundaViaBoleto);
-//           console.log("----------------------------");
-//           const LinhaDigitavelStg =
-//             segundaViaBoleto.LinhaDigitavel[0].linha_digitavel;
-//           resolve(LinhaDigitavelStg);
-//         });
-//       });
-//     })
-//     .catch((error) => console.log("error", error));
-// }
+async function buscaLinhaDigitavel(reciboNumber) {
+  const request = {
+    recibo: reciboNumber,
+    usuario: process.env.USER,
+    senha: process.env.SENHA,
+    chave: process.env.CHAVE,
+  };
+  try {
+    const client = await soap.createClientAsync(url, {
+      endpoint: url,
+    });
+    const result = await client.SegundaViaBoletos_Chatbot_JsonAsync(request);
+    const resultJson = JSON.parse(result?.[0]?.SegundaViaBoletos_Chatbot_JsonResult || '[]');
+    return (resultJson.LinhaDigitavel[0].linha_digitavel);
+  } catch (err) {
+    console.error("Error making SOAP request:", err);
+  }
+}
 
 app.listen(3003, function () {
   console.log("Servidor aberto na porta 3003");

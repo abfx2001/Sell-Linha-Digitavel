@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="../src/assets/css/style.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Poppins"
@@ -37,7 +39,7 @@
           />
           <br />
           <h1>Linha digitável para pagamento:</h1>
-          <% if (linhaDigitavelStg && linhaDigitavelStg.Recibos && linhaDigitavelStg.Recibos.length > 0) { %>
+          <% if (linhaDigitavelStg && linhaDigitavelStg.length > 0) { %>
             <table class="table table-hover table-bordered container-fluid">
               <thead>
                 <tr>
@@ -48,13 +50,13 @@
                 </tr>
               </thead>
               <tbody>
-                <% linhaDigitavelStg.Recibos.forEach(function(recibo) { %>
+                <% linhaDigitavelStg.forEach(function(recibo) { %>
                   <tr>
                     <td><%= recibo.recibo %></td>
                     <td><%= recibo.vencimento %></td>
                     <td><%= recibo.valor %></td>
                     <td>
-                      <button class="copy-btn btn-copiar" data-clipboard-text="<%= recibo.linhadigitavel %>">
+                      <button class="copy-btn btn-copiar copy-link-btn" data-clipboard-text="<%= recibo.linhaDigitavel %>">
                         Copiar
                       </button>
                     </td>
@@ -84,6 +86,9 @@
             >
             é descomplicada, assim como deve ser.
           </p>
+          <form action="/" method="get">
+            <button type="submit" class="btn-voltar">Voltar ao Início</button>
+          </form>
         </div>
       </div>
     </div>
