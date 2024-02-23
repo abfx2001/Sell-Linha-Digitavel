@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="../src/assets/css/style.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Poppins"
@@ -23,40 +25,34 @@
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
-    <title>Linha Digitável</title>
+    <title>Erros</title>
   </head>
   <body>
     <div class="container text-center">
       <div class="row align-items-center">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-10 offset-md-1">
           <img
+            style="width: 300px"
             class="logo"
             src="/img/Logos_SellAdministradora_SellAdm_LogoPositiva_Cor.png"
             alt="Sell-Logo"
           />
-          <br />
-          <h1>Linha Digitável</h1>
-          <form id="formBuscar" action="/buscar" method="post">
-            <input
-              type="text"
-              class="input-cpf-cnpj"
-              placeholder="CPF/CNPJ  do titular"
-              name="fildValue"
-              id="cpfCnpj"
-              maxlength="18"
-            />
-            <br />
-            <button type="submit" class="col-md-3 offset-md-8 btn btn-avancar" id="btn-avancar">
-              Avançar
-            </button>
-          </form>
+        <br />
+        <p>Página de Erro</p>
+        <br />
+        <div class="col-md-6 offset-md-3">
           <p class="justify-content-evenly">
             <font color="#3999d5">Atender</font> está no nosso DNA,
             <font color="#3999d5">entender</font> é o nosso diferencial. No
-            portal da Sell, a
-            <font color="#6eb858">2ª via do boleto</font>
+            portal Sell, a
+            <a href="https://www.selladm.com.br"
+              ><font color="#6eb858">2ª via do boleto</font></a
+            >
             é descomplicada, assim como deve ser.
           </p>
+          <form action="/" method="get">
+            <button type="submit" class="btn-voltar">Voltar ao Início</button>
+          </form>
         </div>
       </div>
     </div>
