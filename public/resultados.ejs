@@ -38,32 +38,37 @@
           <br />
           <h1>Resultados para: <%= cpfCnpj %></h1>
         </div>
-        <table class="table table-hover table-bordered container-fluid">
-          <thead>
-            <tr>
-              <th>Número</th>
-              <th>Condominio</th>
-              <th>Bloco</th>
-              <th>Unidade</th>
-              <th>Linha Digitável</th>
-              <th class="invisivel">Tipo - invisivel</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% Condominio.forEach(function(item) { %>
-            <tr>
-              <td><%= item.condominio %></td>
-              <td><%= item.nome %></td>
-              <td><%= item.bloco %></td>
-              <td><%= item.unidade %></td>
-              <td class="invisivel"><%= item.tipo %></td>
-              <td>
-                <a href="#" class="visualizar-link">Visualizar</a>
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
-        </table>
+        <% if (Condominio.length === 0) { %>
+          <h2>CPF ou CNPJ não encontrado na base de dados.</h2>
+          <br />
+          <% } else { %>
+            <table class="table table-hover table-bordered container-fluid">
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Condominio</th>
+                  <th>Bloco</th>
+                  <th>Unidade</th>
+                  <th>Linha Digitável</th>
+                  <th class="invisivel">Tipo - invisivel</th>
+                </tr>
+              </thead>
+              <tbody>
+                  <% Condominio.forEach(function(item) { %>
+                    <tr>
+                      <td><%= item.condominio %></td>
+                      <td><%= item.nome %></td>
+                      <td><%= item.bloco %></td>
+                      <td><%= item.unidade %></td>
+                      <td class="invisivel"><%= item.tipo %></td>
+                      <td>
+                        <a href="#" class="visualizar-link">Visualizar</a>
+                      </td>
+                    </tr>
+                  <% }); %>
+              </tbody>
+            </table>
+          <% } %>
         <br />
         <br />
         <div class="col-md-6 offset-md-3">
@@ -74,6 +79,9 @@
             <font color="#6eb858">2ª via do boleto</font>
             é descomplicada, assim como deve ser.
           </p>
+          <form action="/" method="get">
+            <button type="submit" class="btn-voltar">Voltar ao Início</button>
+          </form>
         </div>
       </div>
     </div>

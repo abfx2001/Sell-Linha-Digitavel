@@ -28,6 +28,8 @@ app.get("/resultados", (req, res) => {
     .catch((error) => {
       console.log("error", error);
       res.status(500).send({ error: "Ocorreu um erro ao buscar o CPF." });
+      res.redirect(`/erros`)
+      throw new Error('SOAP_REQUEST_ERROR', { cause: error });
     });
 });
 
@@ -77,16 +79,19 @@ app.get("/show-linha", async (req, res) => {
   }
 });
 
+// render da página dos erros <--
 app.get("/erros", (req, res) => {
   res.render(__dirname + "/public/erros.ejs");
 })
 
+// caminho dos erros <--
 app.use((err, req, res, next) => {
   if (err.message === 'SOAP_REQUEST_ERROR') {
-    // Send a specific HTTP response with the error message
-    return res.redirect(`/erros`); //res.status(500).json({ error: err.message });
+    return res.redirect(`/erros`); 
   }
-  // Handle other errors
+  if (err.message === 'NO_CPF_OR_CNPJ_ASSIGNMENT') {
+    return res.redirect(`/erros`); 
+  }
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
