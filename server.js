@@ -36,9 +36,9 @@ app.post("/show-linha", async (req, res) => {
     const dados = req.body;
     const jsonResultadoLinhaDigitavel = await buscaRelacaoRecibo(dados);
     res.redirect(`/show-linha?linhaValue=${jsonResultadoLinhaDigitavel}`);
-  } catch (error) {
-    console.error("Erro ao renderizar:", error);
-    res.status(500).send("Erro ao renderizar a página");
+  } catch (err) {
+    console.error("Erro ao renderizar:");
+    res.redirect(`/erros?mensagem=${"Erro ao gerar linha digitável"}`);
   }
 });
 
@@ -77,10 +77,14 @@ app.get("/show-linha", async (req, res) => {
   }
 });
 
+app.get("/erros", (req, res) => {
+  res.render(__dirname + "/public/erros.ejs");
+})
+
 app.use((err, req, res, next) => {
   if (err.message === 'SOAP_REQUEST_ERROR') {
     // Send a specific HTTP response with the error message
-    return res.status(500).json({ error: err.message });
+    return res.redirect(`/erros`); //res.status(500).json({ error: err.message });
   }
   // Handle other errors
   res.status(500).json({ error: 'Internal Server Error' });
