@@ -28,9 +28,9 @@
     <title>Linha Digitável</title>
   </head>
   <body>
-    <div class="container text-center">
-      <div class="row align-items-center">
-        <div class="col-md-6 offset-md-3">
+    <div class="container-sm">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-lg-6 col-12 text-center">
           <img
             class="logo"
             src="/img/Logos_SellAdministradora_SellAdm_LogoPositiva_Cor.png"
@@ -39,17 +39,19 @@
           <br />
           <h1>Linha Digitável</h1>
           <form id="formBuscar" action="/buscar" method="post">
-            <input
-              type="text"
-              class="input-cpf-cnpj"
-              placeholder="CPF/CNPJ  do titular"
-              name="fildValue"
-              id="cpfCnpj"
-              maxlength="18"
-              required
-            />
+            <div class="row">
+              <input
+                type="text"
+                class="col-lg-8 offset-lg-2 offset-1 col-10 input-cpf-cnpj"
+                placeholder="CPF/CNPJ  do titular"
+                name="fildValue"
+                id="cpfCnpj"
+                maxlength="18"
+                required
+              />
+            </div>
             <br />
-            <button type="submit" class="col-md-3 offset-md-8 btn btn-avancar" id="btn-avancar">
+            <button type="submit" class="col-lg-3 offset-lg-6 col-4 btn-avancar" id="btn-avancar">
               Avançar
             </button>
           </form>

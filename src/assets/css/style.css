@@ -14,6 +14,10 @@ h1 {
   font-weight: bolder !important;
 }
 
+.conteudo{
+  width: 50%;
+}
+
 .logo {
   width: 300px;
 }
@@ -22,7 +26,7 @@ h1 {
   border: 5px solid lightgray;
   padding: 20px;
   border-radius: 5px;
-  width: 600px;
+  
   margin-bottom: 20px;
 }
 
