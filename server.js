@@ -101,9 +101,9 @@ const url =
 async function buscaCPFJson(cpf) {
   const request = {
     cnpj_cpf: cpf,
-    usuario: process.env.USER,
-    senha: process.env.SENHA,
-    chave: process.env.CHAVE,
+    usuario:"API", // process.env.USER,
+    senha:"wufmot-zewSa4-hibnof", // process.env.SENHA,
+    chave:";eO_;;S+;t+;Ug;5_z0F^;d+8^a+=o^=3JRa_=0-9;_Ai5J0w+^-s^7=^SL5k6z-cFTT6v", // process.env.CHAVE,
   };
   try {
     const client = await soap.createClientAsync(url, {
@@ -123,9 +123,9 @@ async function buscaRelacaoRecibo(jsonBuscaCPF) {
     bloco: jsonBuscaCPF.bloco,
     unidade: jsonBuscaCPF.unidade,
     tipo: jsonBuscaCPF.tipo,
-    usuario: process.env.USER,
-    senha: process.env.SENHA,
-    chave: process.env.CHAVE,
+    usuario:"API", //process.env.USER,
+    senha:"wufmot-zewSa4-hibnof", //process.env.SENHA,
+    chave:";eO_;;S+;t+;Ug;5_z0F^;d+8^a+=o^=3JRa_=0-9;_Ai5J0w+^-s^7=^SL5k6z-cFTT6v", //process.env.CHAVE,
   };
   try {
     const client = await soap.createClientAsync(url, {
@@ -155,9 +155,9 @@ async function buscaSegundaViaBoleto(relacaoRecibosStg) {
 async function buscaLinhaDigitavel(reciboNumber) {
   const request = {
     recibo: reciboNumber,
-    usuario: process.env.USER,
-    senha: process.env.SENHA,
-    chave: process.env.CHAVE,
+    usuario:"API", //process.env.USER,
+    senha:"wufmot-zewSa4-hibnof", //process.env.SENHA,
+    chave:";eO_;;S+;t+;Ug;5_z0F^;d+8^a+=o^=3JRa_=0-9;_Ai5J0w+^-s^7=^SL5k6z-cFTT6v", //process.env.CHAVE,
   };
   try {
     const client = await soap.createClientAsync(url, {

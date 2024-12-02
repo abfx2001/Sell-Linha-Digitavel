@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/img/favicon.ico" />
     <link rel="stylesheet" href="../src/assets/css/style.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Poppins"
@@ -24,13 +25,17 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
     <title>Linha Digitável</title>
   </head>
   <body>
-    <div class="container text-center">
-      <div class="row align-items-center">
-        <div class="col-md-6 offset-md-3">
+    <div class="container-sm">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-lg-6 col-12 text-center">
           <img
             class="logo"
             src="/img/Logos_SellAdministradora_SellAdm_LogoPositiva_Cor.png"
@@ -39,20 +44,53 @@
           <br />
           <h1>Linha Digitável</h1>
           <form id="formBuscar" action="/buscar" method="post">
-            <input
-              type="text"
-              class="input-cpf-cnpj"
-              placeholder="CPF/CNPJ  do titular"
-              name="fildValue"
-              id="cpfCnpj"
-              maxlength="18"
-              required
-            />
-            <br />
-            <button type="submit" class="col-md-3 offset-md-8 btn btn-avancar" id="btn-avancar">
+            <div class="row">
+              <input
+                type="text"
+                class="col-lg-8 offset-lg-2 offset-1 col-10 input-cpf-cnpj"
+                placeholder="CPF/CNPJ  do titular"
+                name="fildValue"
+                id="cpfCnpj"
+                maxlength="18"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="col-lg-3 offset-lg-6 col-4 btn-avancar"
+              id="btn-avancar"
+            >
               Avançar
             </button>
           </form>
+          <div class="flex container-md justify-content-center">
+            <p class="fs-5 text-danger text-wrap" style="text-align: justify">
+              <font class="fw-bold fs-5">Cuidados ao efetuar o pagamento:</font>
+              <br />
+              1. Compare os dados com seu boleto anterior. <br />
+              2. O beneficiário deve ser o Condomínio ou a Sell ADM. <br />
+              3. O nome do pagador e CPF devem ser do proprietário da unidade.
+              <br />
+              4. Mantenha sempre o antivírus de sua máquina atualizado. <br />
+            </p>
+            <p class="fs-5 text-wrap" style="text-align: justify">
+              <font class="fw-bold fs-5"
+                >Não se esqueça das formas de obter os boletos online:</font
+              >
+              <br />
+              1. Envio por e-mail para clientes cadastrados no Portal Sell;
+              <br />
+              2. No Portal Sell; <br />
+              3. No APP da Sell Adm; <br />
+              4. Diretamente no Banco do proprietário da unidade, na aba de DDA;
+              <br />
+              5. Acesso a linha digitável na FAQ Sell selladm.com.br/fasell;
+              <br />
+              6. WhatsApp (11) 3796-0203 com link do boleto enviado para o
+              <br />
+              e-mail cadastrado no Portal Sell; <br />
+            </p>
+          </div>
           <p class="justify-content-evenly">
             <font color="#3999d5">Atender</font> está no nosso DNA,
             <font color="#3999d5">entender</font> é o nosso diferencial. No
